@@ -1475,7 +1475,7 @@ fn generate_invocation(
     };
 
     let asset_path_string = asset_path.value();
-    let asset_path_string = asset_path_string.strip_prefix("src").unwrap_or(&asset_path_string);
+    let asset_path_string = asset_path_string.strip_prefix("src/").unwrap_or(&asset_path_string);
     // Note: eval will fail if returning undefined. undefined happens if there is no return type
     let js = if is_class_method {
         format!(
@@ -1526,7 +1526,7 @@ fn generate_invocation(
             }
         } else {
             quote! {
-                let js = format!(#js_format, #asset_path, &invocation_id);
+                let js = format!(#js_format, #asset_path_string, &invocation_id);
             }
         };
         let function_id = {
@@ -1555,7 +1555,7 @@ fn generate_invocation(
             }
         } else {
             quote! {
-                let js = format!(#js_format, #asset_path);
+                let js = format!(#js_format, #asset_path_string);
                 let mut eval = dioxus::document::eval(js.as_str());
             }
         }
