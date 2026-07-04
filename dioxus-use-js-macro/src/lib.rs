@@ -1482,12 +1482,12 @@ fn generate_invocation(
     } else if let Some(class) = &class {
         let class_name = &class.class_name;
         format!(
-            "const{{{class_name}}}=await import(\"{asset_path_string}\");{prepare}{drop_declare}{param_declarations}{drop_handle}try{{{call_function}}}catch(e){{console.warn(\"Executing `{func_call_full_path}` threw:\", e);return [false,null];}}{finally}"
+            "const{{{class_name}}}=await import(\"/assets/core/js/{asset_path_string}\");{prepare}{drop_declare}{param_declarations}{drop_handle}try{{{call_function}}}catch(e){{console.warn(\"Executing `{func_call_full_path}` threw:\", e);return [false,null];}}{finally}"
         )
     } else {
         assert_eq!(func_call_full_path.as_str(), func_name_str);
         format!(
-            "const{{{func_name_str}}}=await import(\"{asset_path_string}\");{prepare}{drop_declare}{param_declarations}{drop_handle}try{{{call_function}}}catch(e){{console.warn(\"Executing `{func_call_full_path}` threw:\", e);return [false,null];}}{finally}"
+            "const{{{func_name_str}}}=await import(\"/assets/core/js/{asset_path_string}\");{prepare}{drop_declare}{param_declarations}{drop_handle}try{{{call_function}}}catch(e){{console.warn(\"Executing `{func_call_full_path}` threw:\", e);return [false,null];}}{finally}"
         )
     };
     fn to_raw_string_literal(s: &str) -> Literal {
@@ -1524,8 +1524,7 @@ fn generate_invocation(
             }
         } else {
             quote! {
-                const MODULE: Asset = asset!(#asset_path);
-                let js = format!(#js_format, MODULE, &invocation_id);
+                let js = format!(#js_format, #asset_path, &invocation_id);
             }
         };
         let function_id = {
@@ -1554,8 +1553,7 @@ fn generate_invocation(
             }
         } else {
             quote! {
-                const MODULE: Asset = asset!(#asset_path);
-                let js = format!(#js_format, MODULE);
+                let js = format!(#js_format, #asset_path);
                 let mut eval = dioxus::document::eval(js.as_str());
             }
         }
