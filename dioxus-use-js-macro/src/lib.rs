@@ -1473,7 +1473,9 @@ fn generate_invocation(
     } else {
         "finally{dioxus.close();}"
     };
-    let asset_path_string = asset_path.value().strip_prefix("src").unwrap_or_else(|| &asset_path.value());
+
+    let asset_path_string = asset_path.value();
+    let asset_path_string = asset_path_string.strip_prefix("src").unwrap_or(&asset_path_string);
     // Note: eval will fail if returning undefined. undefined happens if there is no return type
     let js = if is_class_method {
         format!(
